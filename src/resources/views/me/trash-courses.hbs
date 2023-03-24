@@ -1,0 +1,105 @@
+<div class="mt-4">
+  <div class="">
+    <a class="text-decoration-none fs-5" href="/me/stored/courses">My Courses</a>
+    <h3>My Courses Deleted</h3>
+
+  </div>
+
+  <table class="table mt-4">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col" colspan="2">createdAt
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each courses}}
+
+      <tr>
+        <th scope="row">{{this._id}}</th>
+        <td>{{this.name}}</td>
+        <td>{{this.desc}}</td>
+        <td>{{this.deletedAt}}</td>
+        <td>
+          <a href="" id="btn-restore" class="btn btn-link" data-bs-id="{{this._id}}">Restore</a>
+          <a href="#" class="btn btn-link" data-bs-id="{{this._id}}" data-bs-toggle="modal"
+            data-bs-target="#delete-course-modal">Delete Forever</a>
+        </td>
+      </tr>
+      {{else}}
+      <tr>
+        <td colspan="5" class="text-center">Trash null.</td>
+      </tr>
+
+      {{/each}}
+
+    </tbody>
+  </table>
+</div>
+{{! Delete Modal }}
+<div class="modal" tabindex="-1" id="delete-course-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Force Delete Course ?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Do you want force delete course ?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button id="btn-delete-course" type="button" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<form name="delete-course-form" method="POST">
+</form>
+
+<form name="restore-course-form" method="POST">
+</form>
+
+<script>
+
+  var courseId;
+  var deleteForm = document.forms['delete-course-form'];
+  var restoreForm = document.forms['restore-course-form'];
+  var exampleModal = document.getElementById('delete-course-modal');
+  var btnDeleteModal = document.getElementById('btn-delete-course');
+  var restoreBtn = document.getElementById("btn-restore")
+
+
+  exampleModal.addEventListener('show.bs.modal', event => {
+    var button = event.relatedTarget;
+    courseId = button.getAttribute('data-bs-id');
+  });
+  btnDeleteModal.onclick = () => {
+    deleteForm.action = '/courses/' + courseId + '/force?_method=DELETE';
+    deleteForm.submit();
+  };
+
+
+  if (restoreBtn) {
+    restoreBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      var courseId = this.getAttribute("data-bs-id");
+
+      restoreForm.action = '/courses/' + courseId + '/restore?_method=PATCH';
+      restoreForm.submit();
+    });
+  } else {
+    console.error("Can not find properties id is 'btn-restore'");
+
+  }
+
+
+
+
+</script>
